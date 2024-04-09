@@ -36,6 +36,7 @@ class RouterNetwork:
     # Function to write adjacency list to a file
     def _write_adjacency_list_to_file(self, filename):
         with open(filename, 'w') as outFile:
+            outFile.write(f"This is the global view of the Routers and the links attached to them along with their cost.\nEach entry in the list coresponds to router number and link cost respectively.\n\n")
             for node, connections in self.adjacency_list.items():
                 outFile.write(f"Node {node+1}: {connections}\n")
 
