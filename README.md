@@ -19,9 +19,14 @@ The simulation considers scenarios such as link failures, sudden changes in link
 - [Contributing](#contributing)
 - [License](#license)
 
+## Dependencies
+ 
+-Ensure you have python and simpy library installed.
+
 ## Installation
 
 To install and set up the project, follow these steps:
+
 
 ```bash
 git clone git@github.com:atharva-keny-0812/LinkStateRouting.git
