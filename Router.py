@@ -1,11 +1,38 @@
+import simpy
 import random
 import heapq
 
 class Router:
     
-    # def __init__(self, connected_routers,router_number):
-    #     self.connected_routers = connected_routers
-    #     self.router_number = router_number
+    def __init__(self,env, name, number,ip_address,connected_routers):
+        self.env=env
+        self.name = name
+        self.number=number
+        self.ip_address = ip_address
+        self.connected_routers=connected_routers
+        self.neighbours={}
+        self.global_view={}
+
+    def broadcast(self,neighbours,number):
+        print("I am called by ",self.name)
+        for neighbour in self.neighbours.keys():
+            # Broadcast information to neighbors
+            self.env.process(self.send_packet(neighbour,neighbours,number))
+
+    def send_packet(self, receiver, packet, packet_number):
+        # Send packet to receiver
+        print("I am sending Packet to:",receiver.name)
+        receiver.receive_packet(packet,packet_number)
+
+    def receive_packet(self, neighbours, number):
+        # Store received packet
+        if number not in self.global_view.keys():
+            print("I am ",self.name,"and have received information of Router",number)
+            self.global_view[number]=neighbours
+            print("I am ",self.name,"calling Broadcast for Router",number)
+            self.broadcast(neighbours,number)
+
+
 
     def _dijkstra_(self, source, adjacency_list):
         # Initialize distances and predecessors dictionaries
