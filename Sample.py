@@ -35,22 +35,22 @@ class Router:
                 neighbor.forward(name,message)
 
 
-env = simpy.Environment()
+# env = simpy.Environment()
 
-# Create routers
-router_a = Router(env, "Router A", [(2, 0), (3, 3)],1)
-router_b = Router(env, "Router B", [(1, 0), (3, 4)],2)
-router_c = Router(env, "Router C", [(1, 3), (2, 4)],3)
+# # Create routers
+# router_a = Router(env, "Router A", [(2, 0), (3, 3)],1)
+# router_b = Router(env, "Router B", [(1, 0), (3, 4)],2)
+# router_c = Router(env, "Router C", [(1, 3), (2, 4)],3)
 
-# Establish connections after routers are created
-router_a.connected_routers.extend([router_c])
-router_b.connected_routers.extend([router_c])
-router_c.connected_routers.extend([router_a, router_b])
+# # Establish connections after routers are created
+# router_a.connected_routers.extend([router_c])
+# router_b.connected_routers.extend([router_c])
+# router_c.connected_routers.extend([router_a, router_b])
 
-# Run the simulation
-env.run(until=10)
+# # Run the simulation
+# env.run(until=10)
 
-# Print messages received by each router
-print("Messages received by Router A:", router_a.messages_received,router_a.global_view)
-print("Messages received by Router B:", router_b.messages_received,router_b.global_view)
-print("Messages received by Router C:", router_c.messages_received,router_c.global_view)
+# # Print messages received by each router
+# print("Messages received by Router A:", router_a.messages_received,router_a.global_view)
+# print("Messages received by Router B:", router_b.messages_received,router_b.global_view)
+# print("Messages received by Router C:", router_c.messages_received,router_c.global_view)
