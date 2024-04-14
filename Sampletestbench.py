@@ -3,18 +3,10 @@ import RandomGraphGenerator as RouterNetwork
 import simpy
 from Sample import Router
 
-# def broadcaster(env,routers):
-#     while True:
-#         for router in routers:
-#             yield env.timeout(2)
-#             router.broadcast(router.neighbours, router.number)
-#             break
-
 # Function to create n router objects and add them to a list
 #Here network repersents entire connection of graph in form of adjacency list.
 routers = [] #Contains n router objects
 def create_routers(env,n, network):
-    print(network)
     for i in range(1, n + 1):
         # neigh = []
         # for j in range(n):
@@ -40,12 +32,11 @@ def main():
 
     # Generate random weighted adjacency list representing router connectivity
     network = router_network.generate_graph(n,w)
-
     # Output the adjacency list
     router_network.print_graph()
     create_routers(env,n, network)
 
-    env.run(until=10)
+    env.run(until=11)
     # # Print messages received by each router
     # print("Messages received by Router A:", router_a.messages_received,router_a.global_view)
     # print("Messages received by Router B:", router_b.messages_received,router_b.global_view)

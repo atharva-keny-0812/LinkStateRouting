@@ -32,6 +32,7 @@ class RouterNetwork:
         
         # Write the adjacency list to a file
         self._write_adjacency_list_to_file("AdjacencyList.txt")
+        return self.adjacency_list
 
     # Function to write adjacency list to a file
     def _write_adjacency_list_to_file(self, filename):
