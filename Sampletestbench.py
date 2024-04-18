@@ -6,18 +6,18 @@ from Sample import Router
 # Function to create n router objects and add them to a list
 #Here network repersents entire connection of graph in form of adjacency list.
 routers = [] #Contains n router objects
-def create_routers(env,n, network):
+def create_routers(env,n, network,adjacency_list):
     for i in range(1, n + 1):
         # neigh = []
         # for j in range(n):
         #     neigh.append((list(network.values())[j]))
-        routers.append(Router(env, "Router" + str(i), network[i],i))
+        routers.append(Router(env, "Router" + str(i), network[i],i,adjacency_list))
         neigh = []
-    print(routers[1].neighbors)
+    # print(routers[1].neighbors)
     # Establish connections after routers are created
     for i in range(n):
         for j in range(len(routers[i].neighbors)):
-            print(i, j)
+            # print(i, j)
             if routers[i].neighbors[j][1] != 0:
                 routers[i].connected_routers.extend([routers[routers[i].neighbors[j][0] - 1]])
     
@@ -34,15 +34,19 @@ def main():
     network = router_network.generate_graph(n,w)
     # Output the adjacency list
     router_network.print_graph()
-    create_routers(env,n, network)
+    create_routers(env,n, network,router_network.adjacency_list)
 
-    env.run(until=11)
-    # # Print messages received by each router
-    # print("Messages received by Router A:", router_a.messages_received,router_a.global_view)
-    # print("Messages received by Router B:", router_b.messages_received,router_b.global_view)
-    # print("Messages received by Router C:", router_c.messages_received,router_c.global_view)
+    env.run(until=100)
+    # # Print Global View of Each Router
     for i in range(n):
+        # print("Messages received by Router:" + str(i + 1),routers[i].global_view)
         print("Messages received by Router:" + str(i + 1), routers[i].messages_received,routers[i].global_view)
+
+    #Print Routing Tables of each router
+    for i in range(n):
+        print("Routing Table of ",routers[i].name)
+        print(routers[i].routing_table)
+        print()
 
 if __name__ == "__main__":
     main()
