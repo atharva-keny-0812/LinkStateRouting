@@ -31,6 +31,7 @@ class RouterNetwork:
                 self.adjacency_list[j].append((i, weight))  # Add connection to j's list as it's bidirectional
         
         # Write the adjacency list to a file
+        self._make_connected()
         self._write_adjacency_list_to_file("AdjacencyList.txt")
         return self.adjacency_list
 
@@ -50,3 +51,44 @@ class RouterNetwork:
     def print_graph(self):
         print("Adjacency List representing router connectivity:")
         self._print_adjacency_list()
+
+    def _is_connected(self):
+    # Perform DFS from an arbitrary vertex
+        visited = set()
+
+        def dfs(node):
+            visited.add(node)
+            for neighbor in self.adjacency_list.get(node, []):
+                if neighbor[0] not in visited:
+                    dfs(neighbor[0])
+
+        start_node = next(iter(self.adjacency_list))  # Start from the first vertex
+        dfs(start_node)
+
+        # Check if all vertices are visited
+        return len(visited) == len(self.adjacency_list)
+
+    def _make_connected(self):
+        if self._is_connected():
+            return
+
+        # Perform DFS from an arbitrary vertex
+        visited = set()
+
+        def dfs(node):
+            visited.add(node)
+            for neighbor in self.adjacency_list.get(node, []):
+                if neighbor[0] not in visited:
+                    dfs(neighbor[0])
+
+        start_node = next(iter(self.adjacency_list))  # Start from the first vertex
+        dfs(start_node)
+
+        # Find vertices not visited
+        not_visited = set(self.adjacency_list.keys()) - visited
+
+        # Connect the first not visited vertex to any visited vertex
+        not_visited_node = next(iter(not_visited))
+        visited_node = next(iter(visited))
+        self.adjacency_list[visited_node].append((not_visited_node, 1))
+        self.adjacency_list[not_visited_node] = [(visited_node, 1)]
