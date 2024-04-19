@@ -1,23 +1,32 @@
 import RandomGraphGenerator as RouterNetwork
 import simpy
-from Sample import Router
+from Router import Router
 import networkx as nx
 import matplotlib.pyplot as plt
 
-# Function to create a graph from an adjacency list
-def create_graph_from_adjacency_list(adj_list):
+def plot_graph(file, adjacency_list):
     # Create an empty graph
-    G = nx.Graph()
+    graph = nx.Graph()
 
     # Add nodes to the graph
-    G.add_nodes_from(adj_list.keys())
+    graph.add_nodes_from(adjacency_list.keys())
 
     # Add edges to the graph based on the adjacency list
-    for node, neighbors in adj_list.items():
+    for node, neighbors in adjacency_list.items():
         for neighbor, weight in neighbors:
-            G.add_edge(node, neighbor, weight=weight)
+            graph.add_edge(node, neighbor, weight=weight)
 
-    return G
+    # Draw the graph
+    pos = nx.spring_layout(graph)  # Layout for better visualization
+    nx.draw(graph, pos, with_labels=True, node_size=700, node_color="skyblue", font_size=10, font_weight="bold")
+    edge_labels = nx.get_edge_attributes(graph, 'weight')
+    nx.draw_networkx_edge_labels(graph, pos, edge_labels=edge_labels)
+
+    # Save the plot as an ASCII-encoded PNG image
+    plt.savefig(file, format='png', bbox_inches='tight', pad_inches=0.2)
+    
+    # Clear the plot to avoid overwriting
+    plt.clf()
 
 # Function to create n router objects and add them to a list
 #Here network repersents entire connection of graph in form of adjacency list.
@@ -42,23 +51,16 @@ def main():
 
     # Generate random weighted adjacency list representing router connectivity
     network = router_network.generate_graph(n,w)
-    # Create a graph from the adjacency list
-    graph = create_graph_from_adjacency_list(router_network.adjacency_list)
-
-    # Draw the graph
-    pos = nx.spring_layout(graph)  # Layout for better visualization
-    nx.draw(graph, pos, with_labels=True, node_size=700, node_color="skyblue", font_size=10, font_weight="bold")
-    edge_labels = nx.get_edge_attributes(graph, 'weight')
-    nx.draw_networkx_edge_labels(graph, pos, edge_labels=edge_labels)
-
-    # Save the plot as an ASCII-encoded PNG image
-    plt.savefig('graph.png', format='png', bbox_inches='tight', pad_inches=0.2)
+   
+    plot_graph('InitialGraph.png',network)
 
     # Print the path to the saved image on the terminal
     print("Router network created and saved as graph.png and AdjacencyList.txt in the current directory.")
     create_routers(env,n, network)
 
     env.run(until=100)
+
+    plot_graph('NewGraph.png',routers[0].global_view)
 
     print("Updated routing tables after link failures for all routers:")
     for router in routers:
