@@ -40,6 +40,11 @@ python Testbench.py
 - Handle scenarios such as link failures and sudden cost increases
 - Simulate communication between routers
 - Handle concurrent packet transmissions [In Future]
+- Flooding of information between routers.
+
+
+https://github.com/atharva-keny-0812/LinkStateRouting/assets/115474416/c05a7fae-ebd5-4b64-a23d-f21844d6afca
+
 
 ## Contributing
 
