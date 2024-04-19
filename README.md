@@ -39,7 +39,7 @@ python Testbench.py
 - Generate routing tables using Dijkstra's algorithm
 - Handle scenarios such as link failures and sudden cost increases
 - Simulate communication between routers
-- Handle concurrent packet transmissions
+- Handle concurrent packet transmissions [In Future]
 
 ## Contributing
 
