@@ -17,8 +17,8 @@ class Router:
     def run(self,env):
         while True:
             random_number = random.randint(1, 100)
-            if env.peek() > 60 and random_number >80:
-                self.fail_link()
+            # if env.peek() > 60 and random_number >80:
+            #     self.fail_link()
             
             # Considering Maximum of 15 routers and a delay of 2s to transfer information from one router to another in a skewed network.
             
