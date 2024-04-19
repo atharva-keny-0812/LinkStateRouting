@@ -26,17 +26,19 @@ class Router:
             # Considering Maximum of 15 routers and a delay of 2s to transfer information from one router to another in a skewed network.
             
 
-            if env.peek()%30==0 and env.peek()!=0:
+            if env.peek()%40==0 and env.peek()!=0:
                 self._complete_global_view()
                 _, predecessors = self._dijkstra_(self.number, self.global_view)
                 self._create_routing_table(self.number, predecessors)
-                # Print routing tables for all routers
-            if env.peek() % 20 ==  0 and env.peek() != 0:
-                print("Routing tables created for all routers:")
-                print(f"Current simulation time: {env.now}, Routing table for {self.name}: {self.routing_table}")
+            
+            # Print routing tables for all routers
+
+            if (env.peek()+35)%30==0 and env.peek() != 0:
+                print(f"\033[93mTime: {env.now}: Routing table for {self.name}:\033[0m")
+                self.print_routing_table()
                 print("________________________________________________________________________________________________")
             
-            if (env.peek()-1)%30==0 and env.peek()!=1:
+            if (env.peek()-1)%40==0 and env.peek()!=1:
                 self.messages_received=[]
 
             message = yield self.env.process(self.receive())
@@ -66,7 +68,7 @@ class Router:
             if neighbor_index == self.number:
                 return
             # Set the weight of the selected neighbor to 0 to simulate link failure
-            print(f"{self.name}: Link failure detected with Router {neighbor_index}")
+            print(f"\033[91mTime: {self.env.now}:{self.name}: Link failure detected with Router {neighbor_index}\033[0m")
             for tup in self.neighbors:
                 if tup == neighbor_to_fail:
                     self.neighbors.remove(tup)
@@ -91,22 +93,23 @@ class Router:
         self.global_view[neighbour.number]=self.neighbors
         self._complete_global_view()
 
-    def sendpacket(self,source_node,destination_node,path):
+    def sendpacket(self, source_node, destination_node, path):
         path.append(self.name)
-        if self.number==destination_node:
-            print(self.name,": I have received message from Router",destination_node)
+        if self.number == destination_node:
+            print("\033[93m" + self.name + "\033[0m" + ": I have received message from Router", destination_node)
             print()
-            print("The path that I took was:")
-            for node in path[:len(path)-1]:
-                print(node,"->",end=" ")
-            print(path[len(path)-1])
+            print("\033[96mThe path that I took was:\033[0m")
+            for node in path[:len(path) - 1]:
+                print("\033[96m" + node + "\033[93m ->\033[0m", end=" ")
+            print("\033[96m" + path[len(path) - 1] + "\033[0m")
             return
-        nexthop=self.routing_table[destination_node]
-        print(self.name,": I am forwarding Router",destination_node,"'s message to Router",nexthop)
+        nexthop = self.routing_table[destination_node]
+        print("\033[93m" + self.name + "\033[0m" + ": I am forwarding Router", destination_node, "'s message to Router", nexthop)
         for router in self.connected_routers:
-            if router.number==nexthop:
-                router.sendpacket(source_node,destination_node,path)
+            if router.number == nexthop:
+                router.sendpacket(source_node, destination_node, path)
                 break
+
 
     def _dijkstra_(self, source, adjacency_list):
         # Initialize distances and predecessors dictionaries
@@ -153,6 +156,20 @@ class Router:
                 else:
                     next_hop = -1
                 self.routing_table[node] = next_hop
+
+    def print_routing_table(self):
+        table = self.routing_table
+        name_color = '\033[95m'  # Purple
+        header_color = '\033[94m'  # Blue
+        reset_color = '\033[0m'  # Reset to default color
+        
+        print(f"Updated routing table for {name_color}{self.name}{reset_color}:")
+        print(f"{header_color}+{'-'*12}+{'-'*9}+{reset_color}")
+        print(f"{header_color}| Destination| Next Hop|{reset_color}")
+        print(f"{header_color}+{'-'*12}+{'-'*9}+{reset_color}")
+        for dest, hop in table.items():
+            print(f"| {dest}{' '*10}| {hop}{' '*7}|")
+        print(f"{header_color}+{'-'*12}+{'-'*9}+{reset_color}")
 
     def _complete_global_view(self):
         num_routers=len(list(self.global_view.keys()))

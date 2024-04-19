@@ -3,6 +3,7 @@ import simpy
 from Router import Router
 import networkx as nx
 import matplotlib.pyplot as plt
+import pprint
 
 def plot_graph(file, adjacency_list):
     # Create an empty graph
@@ -61,25 +62,22 @@ def main():
     env.run(until=100)
 
     plot_graph('NewGraph.png',routers[0].global_view)
-
-    print("Updated routing tables after link failures for all routers:")
-    for router in routers:
-        print(f"Updated routing table for {router.name}: {router.routing_table}")
     
     print("-" * 100)
-    print("We have successfully created the Routing Tables for our network of",n,"routers.\n")
-    print("Now let us show a Demo of how a packet will be sent across this Routing Network\n")
+    print("\033[96mWe have successfully created the Routing Tables for our network of",n,"routers.\n\033[0m")
+    print("\033[92mNow let us show a Demo of how a packet will be sent across this Routing Network\033[0m\n")
     while True:
-        source_node=int(input("Enter the source node: "))
-        destination_node=int(input("Enter the destination node: "))
-        print("-"*30)
+        source_node=int(input("\033[93mEnter the source node: \033[0m"))
+        destination_node=int(input("\033[93mEnter the destination node: \033[0m"))
+        print("\033[95m" + "-"*30 + "\033[0m")
         routers[source_node-1].sendpacket(source_node,destination_node,[])
-        print("-"*30)
-        repeat=input("Do you wish to see the demo again? (yes/no): ")
+        print("\033[95m" + "-"*30 + "\033[0m")
+        repeat=input("\033[94mDo you wish to see the demo again? (yes/no): \033[0m")
         if repeat=="no":
             break
         print()
-        print("-"*30)
+        print("\033[95m" + "-"*30 + "\033[0m")
+
 
 if __name__ == "__main__":
     main()
