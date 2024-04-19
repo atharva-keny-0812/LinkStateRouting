@@ -17,7 +17,7 @@ class Router:
     def run(self,env):
         while True:
             random_number = random.randint(1, 100)
-            if env.peek() > 60 and random_number <-1:
+            if env.peek() > 60 and random_number >80:
                 self.fail_link()
             
             # Considering Maximum of 15 routers and a delay of 2s to transfer information from one router to another in a skewed network.
@@ -63,7 +63,6 @@ class Router:
             if neighbor_index == self.number:
                 return
             # Set the weight of the selected neighbor to 0 to simulate link failure
-            print("TIME: ", self.env.peek())
             print(f"{self.name}: Link failure detected with Router {neighbor_index}")
             for tup in self.neighbors:
                 if tup == neighbor_to_fail:
@@ -89,15 +88,21 @@ class Router:
         self.global_view[neighbour.number]=self.neighbors
         self._complete_global_view()
 
-    def sendpacket(self,source_node,destination_node):
+    def sendpacket(self,source_node,destination_node,path):
+        path.append(self.name)
         if self.number==destination_node:
             print(self.name,": I have received message from Router",destination_node)
+            print()
+            print("The path that I took was:")
+            for node in path[:len(path)-1]:
+                print(node,"->",end=" ")
+            print(path[len(path)-1])
             return
         nexthop=self.routing_table[destination_node]
-        print(self.name,"I am forwarding Router",destination_node,"'s message to Router",nexthop)
+        print(self.name,": I am forwarding Router",destination_node,"'s message to Router",nexthop)
         for router in self.connected_routers:
             if router.number==nexthop:
-                router.sendpacket(source_node,destination_node)
+                router.sendpacket(source_node,destination_node,path)
                 break
 
     def _dijkstra_(self, source, adjacency_list):
