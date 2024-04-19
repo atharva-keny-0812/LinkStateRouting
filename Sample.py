@@ -57,7 +57,10 @@ class Router:
         for node in predecessors:
             if node != source:
                 shortest_path = self._get_shortest_path_(source, node, predecessors)
-                next_hop = shortest_path[1]  # Next hop is the second node in the shortest path
+                if len(shortest_path) >= 2:
+                    next_hop = shortest_path[1]  # Next hop is the second node in the shortest path
+                else:
+                    next_hop = -1
                 self.routing_table[node] = next_hop
 
     def _complete_global_view(self):
@@ -74,22 +77,31 @@ class Router:
 
     def run(self,env):
         while True:
+
+            if env.peek() % 60 ==  0 and env.peek() != 0:
+                self.fail_link()
             
             # Considering Maximum of 15 routers and a delay of 2s to transfer information from one router to another in a skewed network.
             if env.peek()%30==0 and env.peek()!=0:
                 # print(self.name,": ",self.messages_received,self.global_view)
                 self._complete_global_view()
-
-            if (env.peek()-1)%30==0 and env.peek()!=1:
-                print(env.peek(),":Flooding starts again for",self.name)
-                self.messages_received=[]
-
-            if env.peek()%40==0 and env.peek()!=0:
+                print(self.name,"mera global view",self.global_view)
                 # print(env.peek(),":Lo Chala mai Dijkstra ko call karne ~",self.name)
                 _, predecessors = self._dijkstra_(self.number, self.global_view)
                 # print("Kiska hai ye tumko intazar Dijkstra aagaya na ~",self.name)
                 self._create_routing_table(self.number, predecessors)
                 # print("Dekhlo idhar to  Routing Table Taiyar ho gaya na ~",self.name)
+
+            if (env.peek()-1)%30==0 and env.peek()!=1:
+                print(env.peek(),":Flooding starts again for",self.name)
+                self.messages_received=[]
+
+            # if env.peek()%40==0 and env.peek()!=0:
+            #     # print(env.peek(),":Lo Chala mai Dijkstra ko call karne ~",self.name)
+            #     _, predecessors = self._dijkstra_(self.number, self.global_view)
+            #     # print("Kiska hai ye tumko intazar Dijkstra aagaya na ~",self.name)
+            #     self._create_routing_table(self.number, predecessors)
+            #     # print("Dekhlo idhar to  Routing Table Taiyar ho gaya na ~",self.name)
             	
             message = yield self.env.process(self.receive())
             # print("I am Transmittinng my info ~ ",self.name)
@@ -112,3 +124,37 @@ class Router:
                 neighbor.global_view[message[2]]=message[1]
                 # print("Now ",neighbor.name," will forward")
                 neighbor.forward(name,message)
+
+    def fail_link(self):
+        # Select a random neighbor to fail
+        if self.neighbors:
+            neighbor_to_fail = random.choice(self.neighbors)
+            neighbor_index = neighbor_to_fail[0]
+            if neighbor_index == self.number:
+                return
+            # Set the weight of the selected neighbor to 0 to simulate link failure
+            # print(self.name, "my neighbours:", self.neighbors)
+            print(self.name,": Mai tujhse Rishta Nata Todta huun Router",neighbor_to_fail[0])
+            for tup in self.neighbors:
+                if tup == neighbor_to_fail:
+                    self.neighbors.remove(tup)
+                    break
+            for router in self.connected_routers:
+                if router.number == neighbor_index:
+                    neighbor_to_fail_obj = router
+                    neighbor_to_fail_obj.received_fail_link(self)
+                    self.connected_routers.remove(router)
+            self.global_view[neighbor_index]=self.neighbors
+            self._complete_global_view()
+            
+
+    def received_fail_link(self, neighbour):    
+        for tup in self.neighbors:
+            if tup[0] == neighbour.number:
+                self.neighbors.remove(tup)
+                break
+        for router in self.connected_routers:
+                if router.number == neighbour.number:
+                    self.connected_routers.remove(router)
+        self.global_view[neighbour.number]=self.neighbors
+        self._complete_global_view()
