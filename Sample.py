@@ -63,6 +63,7 @@ class Router:
             if neighbor_index == self.number:
                 return
             # Set the weight of the selected neighbor to 0 to simulate link failure
+            print("TIME: ", self.env.peek())
             print(f"{self.name}: Link failure detected with Router {neighbor_index}")
             for tup in self.neighbors:
                 if tup == neighbor_to_fail:
