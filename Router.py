@@ -104,6 +104,9 @@ class Router:
             print("\033[96m" + path[len(path) - 1] + "\033[0m")
             return
         nexthop = self.routing_table[destination_node]
+        if nexthop==-1:
+            print("\033[96mNo Path Exists from Router",source_node,"to Router",destination_node)
+            return
         print("\033[93m" + self.name + "\033[0m" + ": I am forwarding Router", destination_node, "'s message to Router", nexthop)
         for router in self.connected_routers:
             if router.number == nexthop:
