@@ -5,6 +5,14 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import pprint
 
+def cleangraph(network):
+    cleaned_dict = {}
+    for key, value in network.items():
+        cleaned_values = [(x, y) for x, y in value if y != 0]
+        if cleaned_values:
+            cleaned_dict[key] = cleaned_values
+    return cleaned_dict
+
 def plot_graph(file, adjacency_list):
     # Create an empty graph
     graph = nx.Graph()
@@ -53,7 +61,7 @@ def main():
     # Generate random weighted adjacency list representing router connectivity
     network = router_network.generate_graph(n,w)
    
-    plot_graph('InitialGraph.png',network)
+    plot_graph('InitialGraph.png',cleangraph(network))
 
     # Print the path to the saved image on the terminal
     print("Router network created and saved as graph.png and AdjacencyList.txt in the current directory.")
@@ -61,7 +69,7 @@ def main():
 
     env.run(until=100)
 
-    plot_graph('NewGraph.png',routers[0].global_view)
+    plot_graph('NewGraph.png',cleangraph(routers[0].global_view))
     
     print("-" * 100)
     print("\033[96mWe have successfully created the Routing Tables for our network of",n,"routers.\n\033[0m")
