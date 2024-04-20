@@ -96,7 +96,7 @@ class Router:
     def sendpacket(self, source_node, destination_node, path):
         path.append(self.name)
         if self.number == destination_node:
-            print("\033[93m" + self.name + "\033[0m" + ": I have received message from Router", destination_node)
+            print("\033[93m" + self.name + "\033[0m" + ": I have received message from Router", source_node)
             print()
             print("\033[96mThe path that I took was:\033[0m")
             for node in path[:len(path) - 1]:
